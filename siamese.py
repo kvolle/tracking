@@ -69,7 +69,7 @@ writer = tf.summary.FileWriter("log/", sess.graph)
 # serialize the graph
 graph_def = tf.get_default_graph().as_graph_def()
 
-N = 1#150000
+N = 1000000#150000
 # Create a coordinator and run all QueueRunner objects
 coord = tf.train.Coordinator()
 threads = tf.train.start_queue_runners(coord=coord)
