@@ -39,7 +39,7 @@ dataset = dataset.batch(32)
 iterator = dataset.make_initializable_iterator()
 [x1, x2, y] = iterator.get_next()
 
-sess = tf.InteractiveSession()
+sess = tf.InteractiveSession(config=tf.ConfigProto(log_device_placement=True))
 sess.run(iterator.initializer)
 #blah1 = sess.run(tf.reduce_mean(x1))
 #blah2 = sess.run(x2)
