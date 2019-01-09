@@ -39,7 +39,7 @@ dataset = dataset.batch(32)
 iterator = dataset.make_initializable_iterator()
 [x1, x2, y] = iterator.get_next()
 
-sess = tf.InteractiveSession()
+sess = tf.InteractiveSession(config=tf.ConfigProto(log_device_placement=True))
 sess.run(iterator.initializer)
 #blah1 = sess.run(tf.reduce_mean(x1))
 #blah2 = sess.run(x2)
@@ -69,7 +69,7 @@ writer = tf.summary.FileWriter("log/", sess.graph)
 # serialize the graph
 graph_def = tf.get_default_graph().as_graph_def()
 
-N = 10000#150000
+N = 1#150000
 # Create a coordinator and run all QueueRunner objects
 coord = tf.train.Coordinator()
 threads = tf.train.start_queue_runners(coord=coord)
