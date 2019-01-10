@@ -39,7 +39,7 @@ dataset = dataset.batch(32)
 iterator = dataset.make_initializable_iterator()
 [x1, x2, y] = iterator.get_next()
 
-sess = tf.InteractiveSession(config=tf.ConfigProto(log_device_placement=True))
+sess = tf.InteractiveSession()
 sess.run(iterator.initializer)
 #blah1 = sess.run(tf.reduce_mean(x1))
 #blah2 = sess.run(x2)
@@ -62,7 +62,7 @@ else:
 """
 vars = tf.trainable_variables()
 
-train_step = tf.train.GradientDescentOptimizer(0.0000001).minimize(network.loss,var_list=vars)
+train_step = tf.train.GradientDescentOptimizer(0.0001).minimize(network.loss,var_list=vars)
 
 writer = tf.summary.FileWriter("log/", sess.graph)
 
