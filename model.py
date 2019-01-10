@@ -7,8 +7,8 @@ class siamese:
         self.margin = 25.0
         self.keep_prob = 0.5 #tf.placeholder(tf.float32, name='dropout_prob')
         self.num_labels = 4
-        self.x1 = tf.cast(x1, dtype=tf.float32)#tf.placeholder(dtype=tf.float32, shape=[None, 28, 28, 1])
-        self.x2 = tf.cast(x2, dtype=tf.float32)#tf.placeholder(dtype=tf.float32, shape=[None, 28, 28, 1])
+        self.x1 = tf.scalar_mul(0.003922, tf.cast(x1, dtype=tf.float32))#tf.placeholder(dtype=tf.float32, shape=[None, 28, 28, 1])
+        self.x2 = tf.scalar_mul(0.003922, tf.cast(x2, dtype=tf.float32))#tf.placeholder(dtype=tf.float32, shape=[None, 28, 28, 1])
         self.layers = []
         with tf.variable_scope("siamese") as scope:
             self.o1 = self.network(self.x1,sizes)
