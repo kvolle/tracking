@@ -90,7 +90,7 @@ for step in range(N):
     #        network.x2: batch_x2,
     #        network.y_: batch_y})
     #    writer.add_summary(loss_sum, step)
-    if step == 1000:
-        train_step = tf.train.GradientDescentOptimizer(0.000005).minimize(network.loss, var_list=vars)
+#    if step == 1000:
+#        train_step = tf.train.GradientDescentOptimizer(0.000005).minimize(network.loss, var_list=vars)
 writer.close()
 saver.save(sess, 'model/Final')
