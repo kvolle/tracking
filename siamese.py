@@ -69,7 +69,7 @@ writer = tf.summary.FileWriter("log/", sess.graph)
 # serialize the graph
 graph_def = tf.get_default_graph().as_graph_def()
 
-N = 1000000#150000
+N = 500000#150000
 # Create a coordinator and run all QueueRunner objects
 coord = tf.train.Coordinator()
 threads = tf.train.start_queue_runners(coord=coord)
@@ -79,7 +79,7 @@ for step in range(N):
                         network.x2: batch_x2,
                         network.y_: batch_y})"""
     _, loss_v = sess.run([train_step, network.loss])
-    if step % 100 == 0:
+    if step % 1000 == 0:
         print(str(step) + ", " +str(loss_v))
     if np.isnan(loss_v):
         print('Model diverged with loss = NaN')
