@@ -62,7 +62,7 @@ else:
 """
 vars = tf.trainable_variables()
 
-train_step = tf.train.GradientDescentOptimizer(0.0001).minimize(network.loss,var_list=vars)
+train_step = tf.train.AdamOptimizer(0.0001).minimize(network.loss,var_list=vars)
 
 writer = tf.summary.FileWriter("log/", sess.graph)
 
