@@ -5,7 +5,7 @@ class siamese:
     # Create model
     def __init__(self,x1, x2, y, sizes):
         self.margin = 25.0
-        self.keep_prob = 0.5 #tf.placeholder(tf.float32, name='dropout_prob')
+        self.keep_prob = 1.0 #tf.placeholder(tf.float32, name='dropout_prob')
         self.num_labels = 4
         self.x1 = tf.scalar_mul(0.003922, tf.cast(x1, dtype=tf.float32))#tf.placeholder(dtype=tf.float32, shape=[None, 28, 28, 1])
         self.x2 = tf.scalar_mul(0.003922, tf.cast(x2, dtype=tf.float32))#tf.placeholder(dtype=tf.float32, shape=[None, 28, 28, 1])
