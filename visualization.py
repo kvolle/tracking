@@ -64,6 +64,38 @@ def plotNNFilter(input, units):
     plt.imshow(input[0, :, :,0], interpolation="nearest", cmap="gray")
     plt.show()
     print("Fin")
+def print_inputs(sess):
+    n = 20
+    n_columns = 8
+    n_rows = 5
+
+    plt.figure(1, figsize=(20, 20))
+    for i in range(n):
+        [ex1, ex2, match_bool ] = sess.run([x1, x2, match])
+        ex1 = ex1.reshape([image_size, image_size])
+        plt.subplot(n_rows, n_columns, 2*i+1)
+        plt.title('Fig 1 - ' + str(match_bool))
+        plt.imshow(ex1, interpolation="nearest", cmap="gray")
+        plt.axis('off')
+        ex2 = ex2.reshape([image_size, image_size])
+        plt.subplot(n_rows, n_columns, 2*i+2)
+        plt.title('Fig 2 - ' + str(match_bool))
+        plt.imshow(ex2, interpolation="nearest", cmap="gray")
+        plt.axis('off')
+    plt.show()
+
+def print_output_vecs(sess, net):
+    with open('output.csv', 'w') as the_file:
+        for i in range(1000):
+            [mb, out1, out2] = sess.run([match, net.o1, net.o2])
+            out1 = out1.reshape([net.num_labels])
+            out2 = out2.reshape([net.num_labels])
+            mbs = str(mb)
+            mbs = mbs.strip('[')
+            mbs = mbs.strip(']')
+            str1 = ", ".join(str(x) for x in out1)
+            str2 = ", ".join(str(x) for x in out2)
+            the_file.write(mbs + ', ' + str1 + ', ' + str2 + '\n')
 
 # Main body:
 iterator = load_data()
@@ -78,3 +110,5 @@ saver = tf.train.Saver(mod, max_to_keep=15)
 if load_model(sess, saver):
     print("Loaded")
     getActivations(sess, network.out_1)
+    print_inputs(sess)
+    print_output_vecs(sess, network)
