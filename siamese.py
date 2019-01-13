@@ -62,7 +62,7 @@ else:
 """
 vars = tf.trainable_variables()
 
-train_step = tf.train.AdamOptimizer(0.0001).minimize(network.loss,var_list=vars)
+train_step = tf.train.GradientDescentOptimizer(0.0001).minimize(network.loss,var_list=vars)
 
 writer = tf.summary.FileWriter("log/", sess.graph)
 
@@ -80,7 +80,9 @@ for step in range(N):
                         network.y_: batch_y})"""
     _, loss_v = sess.run([train_step, network.loss])
     if step % 1000 == 0:
-        print(str(step) + ", " +str(loss_v))
+        #print(str(step) + ", " +str(loss_v))
+        logged_loss = tf.summary.scalar("loss", tf.constant(loss_v, dtype=tf.float32, shape=[1]))
+        writer.add_summary(logged_loss, step)
     if np.isnan(loss_v):
         print('Model diverged with loss = NaN')
         quit()
