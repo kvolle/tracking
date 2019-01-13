@@ -30,7 +30,7 @@ def load_data():
     dataset = dataset.map(_parse_function)  # Parse the record into tensors.
     dataset = dataset.shuffle(buffer_size=1000)
     dataset = dataset.repeat()  # Repeat the input indefinitely.
-    dataset = dataset.batch(1)
+    dataset = dataset.batch(3)
     return dataset.make_initializable_iterator()
     #[x1, x2, y] = iterator.get_next()
 
@@ -88,8 +88,8 @@ def print_output_vecs(sess, net):
     with open('output.csv', 'w') as the_file:
         for i in range(1000):
             [mb, out1, out2] = sess.run([match, net.o1, net.o2])
-            out1 = out1.reshape([net.num_labels])
-            out2 = out2.reshape([net.num_labels])
+            out1 = out1.reshape([3, net.num_labels])
+            out2 = out2.reshape([3, net.num_labels])
             mbs = str(mb)
             mbs = mbs.strip('[')
             mbs = mbs.strip(']')
@@ -97,6 +97,11 @@ def print_output_vecs(sess, net):
             str2 = ", ".join(str(x) for x in out2)
             the_file.write(mbs + ', ' + str1 + ', ' + str2 + '\n')
 
+def output_test(sess, net):
+    [mb, out1, out2, score] = sess.run([match, net.o1, net.o2, net.loss])
+    out1 = out1.reshape([3, net.num_labels])
+    out2 = out2.reshape([3, net.num_labels])
+    print("Pause")
 # Main body:
 iterator = load_data()
 [x1, x2, match] = iterator.get_next(name="Iterator")
@@ -109,6 +114,7 @@ saver = tf.train.Saver(mod, max_to_keep=15)
 
 if load_model(sess, saver):
     print("Loaded")
-    getActivations(sess, network.out_1)
-    print_inputs(sess)
-    print_output_vecs(sess, network)
+    #etActivations(sess, network.out_1)
+    #print_inputs(sess)
+    #print_output_vecs(sess, network)
+    output_test(sess, network)
