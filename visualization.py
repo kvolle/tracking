@@ -30,7 +30,7 @@ def load_data():
     dataset = dataset.map(_parse_function)  # Parse the record into tensors.
     dataset = dataset.shuffle(buffer_size=1000)
     dataset = dataset.repeat()  # Repeat the input indefinitely.
-    dataset = dataset.batch(3)
+    dataset = dataset.batch(1)
     return dataset.make_initializable_iterator()
     #[x1, x2, y] = iterator.get_next()
 
@@ -114,7 +114,7 @@ saver = tf.train.Saver(mod, max_to_keep=15)
 
 if load_model(sess, saver):
     print("Loaded")
-    #etActivations(sess, network.out_1)
-    #print_inputs(sess)
-    #print_output_vecs(sess, network)
-    output_test(sess, network)
+    getActivations(sess, network.out_1)
+    print_inputs(sess)
+    print_output_vecs(sess, network)
+#    output_test(sess, network)
