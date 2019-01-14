@@ -79,13 +79,13 @@ for step in range(N):
                         network.x2: batch_x2,
                         network.y_: batch_y})"""
     _, loss_v = sess.run([train_step, network.loss])
-    if step % 1000 == 0:
-        #print(str(step) + ", " +str(loss_v))
-        logged_loss = tf.summary.scalar("loss", tf.constant(loss_v, dtype=tf.float32))
-        ll = sess.run(logged_loss)
+    if step % 100 == 0:
+#        print(str(step) + ", " +str(loss_v))
+        ll = sess.run(network.acc)
         writer.add_summary(ll, step)
     if np.isnan(loss_v):
         print('Model diverged with loss = NaN')
+	saver.save(sess, 'model/Final')
         quit()
     #if step % 10 == 0:
     #    [loss_sum] = sess.run([network.acc], feed_dict={
