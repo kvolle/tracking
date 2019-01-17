@@ -2,6 +2,7 @@ import tensorflow as tf
 from matplotlib import pyplot as plt
 import math
 import model
+import numpy as np
 
 image_size = 28
 
