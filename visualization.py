@@ -5,6 +5,7 @@ import model
 import numpy as np
 
 image_size = 28
+batch_size = 1
 
 def _parse_function(example_proto):
     feature = {
@@ -31,7 +32,7 @@ def load_data():
     dataset = dataset.map(_parse_function)  # Parse the record into tensors.
     dataset = dataset.shuffle(buffer_size=1000)
     dataset = dataset.repeat()  # Repeat the input indefinitely.
-    dataset = dataset.batch(3)
+    dataset = dataset.batch(batch_size)
     return dataset.make_initializable_iterator()
     #[x1, x2, y] = iterator.get_next()
 
@@ -89,8 +90,12 @@ def print_output_vecs(sess, net):
     with open('output.csv', 'w') as the_file:
         for i in range(1000):
             [mb, out1, out2] = sess.run([match, net.o1, net.o2])
-            out1 = out1.reshape([3, net.num_labels])
-            out2 = out2.reshape([3, net.num_labels])
+            if (batch_size > 1):
+                out1 = out1.reshape([batch_size, net.num_labels])
+                out2 = out2.reshape([batch_size, net.num_labels])
+            else:
+                out1 = out1.reshape([net.num_labels])
+                out2 = out2.reshape([net.num_labels])
             mbs = str(mb)
             mbs = mbs.strip('[')
             mbs = mbs.strip(']')
