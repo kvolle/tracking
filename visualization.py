@@ -108,11 +108,43 @@ def output_test(sess, net):
     out1 = out1.reshape([3, net.num_labels])
     out2 = out2.reshape([3, net.num_labels])
     print("Pause")
+
+def get_distances(sess, net):
+    n_bins = 20
+    bin_max = 20
+    dist_diff=[]
+    dist_same=[]
+    for i in range(1000):
+        [mb, out1, out2] = sess.run([match, net.o1, net.o2])
+        out1 = out1.reshape([net.num_labels])
+        out2 = out2.reshape([net.num_labels])
+        dist = np.linalg.norm(out1 - out2)
+        if (mb):
+            dist_same.append(min(dist, bin_max-0.001))
+        else:
+            dist_diff.append(min(dist, bin_max-0.001))
+    #print("Same: " + str(dist_same/1000.) + " Diff: " + str(dist_diff/1000.))
+
+
+    fig, axs = plt.subplots(1, 2, sharey=True, tight_layout=True)
+    # We can set the number of bins with the `bins` kwarg
+    #axs[0].hist(dist_same, bins=n_bins)
+    #axs[1].hist(dist_diff, bins=n_bins)
+    #plt.show()
+    # Fix the range
+    axs[0].hist(dist_same, bins=n_bins, range=[0., bin_max])
+    axs[0].set_title("Same Image Dist")
+    axs[1].hist(dist_diff, bins=n_bins, range=[0., bin_max])
+    axs[1].set_title("Diff Image Dist")
+    plt.show()
+
+
 # Main body:
 iterator = load_data()
 [x1, x2, match] = iterator.get_next(name="Iterator")
 sess = tf.InteractiveSession()
 sess.run(iterator.initializer)
+
 
 network = model.siamese(x1, x2, match, [1024, 1024, 2])
 mod = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES)
@@ -120,7 +152,8 @@ saver = tf.train.Saver(mod, max_to_keep=15)
 
 if load_model(sess, saver):
     print("Loaded")
-    #etActivations(sess, network.out_1)
+    #getActivations(sess, network.out_1)
     #print_inputs(sess)
     #print_output_vecs(sess, network)
-    output_test(sess, network)
+    #output_test(sess, network)
+    get_distances(sess, network)
