@@ -110,8 +110,8 @@ def output_test(sess, net):
     print("Pause")
 
 def get_distances(sess, net):
-    n_bins = 20
-    bin_max = 20
+    n_bins = 40
+    bin_max = 5
     dist_diff=[]
     dist_same=[]
     for i in range(1000):
@@ -138,6 +138,22 @@ def get_distances(sess, net):
     axs[1].set_title("Diff Image Dist")
     plt.show()
 
+def assess_activation(sess, net):
+    [conv1, conv2, conv3] = sess.run([net.out_1, net.out_2, net.out_3])
+    m1 = np.mean(conv1, axis=(0, 1, 2),  dtype=np.float64)
+    m2 = np.mean(conv2, axis=(0, 1, 2),  dtype=np.float64)
+    m3 = np.mean(conv3, axis=(0, 1, 2),  dtype=np.float64)
+    s1 = np.std(conv1, axis=(0, 1, 2),  dtype=np.float64)
+    s2 = np.std(conv2, axis=(0, 1, 2),  dtype=np.float64)
+    s3 = np.std(conv3, axis=(0, 1, 2),  dtype=np.float64)
+    low = m3-s3
+    high = m3+s3
+    plt.plot(m3)
+    plt.plot(low)
+    plt.plot(high)
+    plt.show()
+    print("fin")
+
 
 # Main body:
 iterator = load_data()
@@ -157,3 +173,4 @@ if load_model(sess, saver):
     #print_output_vecs(sess, network)
     #output_test(sess, network)
     get_distances(sess, network)
+    #assess_activation(sess, network)
