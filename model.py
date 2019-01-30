@@ -8,6 +8,7 @@ class siamese:
         self.keep_prob = 1.0 #tf.placeholder(tf.float32, name='dropout_prob')
         self.num_labels = 128
         self.x1 = tf.scalar_mul(0.003922, tf.cast(x1, dtype=tf.float32))#tf.placeholder(dtype=tf.float32, shape=[None, 28, 28, 1])
+        self.x1 = tf.identity(self.x1, name="myInput")
         self.x2 = tf.scalar_mul(0.003922, tf.cast(x2, dtype=tf.float32))#tf.placeholder(dtype=tf.float32, shape=[None, 28, 28, 1])
         self.layers = []
         with tf.variable_scope("siamese") as scope:
@@ -39,7 +40,7 @@ class siamese:
         #                                       scale=None, variance_epsilon=0.0000001)
         #input_layer_local = normalized
         input_layer_local = input_layer
-        self.out_1 = self.conv_layer(input_layer_local, [7,7,1, l1_filters],'layer1', stride = 1)
+        self.out_1 = self.conv_layer(input_layer_local, [7, 7, 1, l1_filters],'layer1', stride = 1)
         self.out_2 = self.conv_layer(self.out_1, [5, 5, l1_filters, l2_filters],'layer2', stride = 1, pooling=False)
         self.out_3 = self.conv_layer(self.out_2, [5, 5, l2_filters, l3_filters], 'layer3', stride = 1, pooling=True)
         reshape = tf.reshape(self.out_3, [-1, 7 * 7 * l3_filters])
