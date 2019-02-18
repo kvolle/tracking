@@ -4,7 +4,7 @@ class siamese:
 
     # Create model
     def __init__(self,x1, x2, y, sizes):
-        self.margin = 25.0
+        self.margin = 25.00
         self.keep_prob = 1.0 #tf.placeholder(tf.float32, name='dropout_prob')
         self.num_labels = 128
         self.x1 = tf.scalar_mul(0.003922, tf.cast(x1, dtype=tf.float32))#tf.placeholder(dtype=tf.float32, shape=[None, 28, 28, 1])
@@ -22,12 +22,12 @@ class siamese:
 
     def network(self, input_layer, sizes):
         #i = 0
-        l1_filters = 64
-        l2_filters = 128#64
-        l3_filters = 128
-        fc1 = 512
-        fc2 = 256
-        fc3 = 256
+        l1_filters = 16
+        l2_filters = 32#64
+        l3_filters = 32
+        fc1 = 128
+        fc2 = 64
+        fc3 = 64
         """
         mean_tensor = tf.constant(0., dtype=tf.float64)
         variance_tensor = tf.constant(1., dtype=tf.float64)
