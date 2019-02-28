@@ -30,7 +30,7 @@ def _parse_function(example_proto):
     return image_a, image_b, match
 
 # prepare data and tf.session
-data_path = 'datasets/gray.tfrecords'
+data_path = ['datasets/gray.tfrecords','datasets/gray2.tfrecords']
 dataset = tf.data.TFRecordDataset(data_path)
 dataset = dataset.map(_parse_function)  # Parse the record into tensors.
 dataset = dataset.shuffle(buffer_size=1000)
