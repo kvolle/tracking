@@ -25,28 +25,16 @@ class siamese:
         l1_filters = 16
         l2_filters = 32#64
         l3_filters = 32
-        fc1 = 128
-        fc2 = 64
-        fc3 = 64
-        """
-        mean_tensor = tf.constant(0., dtype=tf.float64)
-        variance_tensor = tf.constant(1., dtype=tf.float64)
-        normalized = tf.nn.batch_normalization(input_layer,mean=mean_tensor, variance=variance_tensor, offset=None, scale=None, variance_epsilon=0.0000001)
-        """
-        #batch_mean1, batch_var1 = tf.nn.moments(input_layer, [0])
-        #normalized = tf.nn.batch_normalization(input_layer, mean=batch_mean1, variance=batch_var1,
-        #                                       offset=None,
-        #                                       scale=None, variance_epsilon=0.0000001)
-        #input_layer_local = normalized
+        l4_filters = 64
+        l5_filters = 128
+        
         input_layer_local = input_layer
         self.out_1 = self.conv_layer(input_layer_local, [7,7,1, l1_filters],'layer1', stride = 1)
         self.out_2 = self.conv_layer(self.out_1, [5, 5, l1_filters, l2_filters],'layer2', stride = 1, pooling=False)
         self.out_3 = self.conv_layer(self.out_2, [5, 5, l2_filters, l3_filters], 'layer3', stride = 1, pooling=True)
-        reshape = tf.reshape(self.out_3, [-1, 7 * 7 * l3_filters])
-        self.out_4 = self.layer_generation(reshape, fc1, "fc1")
-        self.out_5 = self.layer_generation(self.out_4, fc2, "fc2")
-        self.out_6 = self.layer_generation(self.out_5, fc3, "fc3")
-        self.final_out = self.layer_generation(self.out_6, self.num_labels, "output")
+        self.out_4 = self.conv_layer(self.out_3, [3, 3, l3_filters, l4_filters], 'layer4', stride = 2, pooling=True)
+        self.out_5 = self.conv_layer(self.out_4, [3, 3, l4_filters, l5_filters], 'layer5', stride = 1, pooling=True)
+        self.final_out = tf.reshape(self.out_5, [-1, l5_filters])
         return self.final_out
     """
         for x in sizes:
@@ -121,19 +109,3 @@ class siamese:
         diff = tf.multiply(labels_f, tf.pow(tf.maximum(0.0, tf.subtract(margin_tensor, distance)), 2.))
         return tf.summary.scalar("loss", tf.reduce_mean(same) + tf.reduce_mean(diff))
         #return [tf.summary.histogram("fcw", fcw1)]
-"""
-    def custom_loss(self):
-        margin = 5.0
-        labels_t = tf.to_float(self.y_)
-        labels_f = tf.subtract(1.0, labels_t, name="1-yi")          # labels_ = !labels;
-        distance2 = tf.pow(tf.subtract(self.o1, self.o2), 2)
-        distance2 = tf.reduce_sum(distance2, 1)
-        distance = tf.sqrt(distance2+1e-6, name="Distance")
-        same_class_losses = tf.multiply(labels_t, distance2)
-        margin_tensor = tf.constant(margin,dtype=tf.float32, name="Margin")
-        diff_class_losses = tf.multiply(labels_f, tf.pow(tf.maximum(0.0, tf.subtract(margin_tensor, distance)), 2.))
-        #losses = tf.add(same_class_losses, diff_class_losses)
-        #loss = tf.reduce_sum(losses, name="loss")#losses, name="loss")
-        loss = tf.add(tf.reduce_mean(same_class_losses), tf.reduce_mean(diff_class_losses))
-        return loss
-"""
