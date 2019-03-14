@@ -25,16 +25,18 @@ class siamese:
         l1_filters = 16
         l2_filters = 32#64
         l3_filters = 32
-        l4_filters = 64
-        l5_filters = 128
+        l4_filters = 32
+        l5_filters = 64
+        l6_filters = 128
         
         input_layer_local = input_layer
-        self.out_1 = self.conv_layer(input_layer_local, [7,7,1, l1_filters],'layer1', stride = 1)
-        self.out_2 = self.conv_layer(self.out_1, [5, 5, l1_filters, l2_filters],'layer2', stride = 1, pooling=False)
-        self.out_3 = self.conv_layer(self.out_2, [5, 5, l2_filters, l3_filters], 'layer3', stride = 1, pooling=True)
-        self.out_4 = self.conv_layer(self.out_3, [3, 3, l3_filters, l4_filters], 'layer4', stride = 2, pooling=True)
-        self.out_5 = self.conv_layer(self.out_4, [3, 3, l4_filters, l5_filters], 'layer5', stride = 1, pooling=True)
-        self.final_out = tf.reshape(self.out_5, [-1, l5_filters])
+        self.out_1 = self.conv_layer(input_layer_local, [7,7,1, l1_filters],'layer1', padding='VALID', stride = 1)
+        self.out_2 = self.conv_layer(self.out_1, [5, 5, l1_filters, l2_filters],'layer2', padding='VALID', stride = 1, pooling=False)
+        self.out_3 = self.conv_layer(self.out_2, [5, 5, l2_filters, l3_filters], 'layer3', padding='SAME', stride = 1, pooling=False)
+        self.out_4 = self.conv_layer(self.out_3, [3, 3, l3_filters, l4_filters], 'layer4', padding='VALID',stride = 1, pooling=False)
+        self.out_5 = self.conv_layer(self.out_4, [3, 3, l4_filters, l5_filters], 'layer5', padding='VALID',stride = 1, pooling=False)
+        self.out_6 = self.conv_layer(self.out_5, [3, 3, l5_filters, l6_filters], 'layer6', padding='VALID',stride = 1, pooling=False)
+        self.final_out = tf.reshape(self.out_6, [-1, l6_filters])
         return self.final_out
     """
         for x in sizes:
@@ -52,11 +54,11 @@ class siamese:
         out = tf.nn.bias_add(tf.matmul(input, w, name=name + '_mul'), b, name=name + '_add')
         return out
 
-    def conv2d(self, input_layer, W, stride=1):
+    def conv2d(self, input_layer, W, pad, stride=1):
         return tf.nn.conv2d(input=input_layer,
                             filter=W,
                             strides=[1, stride, stride, 1],
-                            padding='SAME')
+                            padding=pad)
 
     def create_max_pool_layer(self, input):
         return  tf.nn.max_pool(value=input,
@@ -68,10 +70,10 @@ class siamese:
         tf.summary.histogram(tensor_name + '/activations', x)
         return tf.summary.scalar(tensor_name + '/sparsity', tf.nn.zero_fraction(x))
 
-    def conv_layer(self, input_layer, weights, name, stride=1, pooling=True):
+    def conv_layer(self, input_layer, weights, name, padding, stride=1, pooling=True):
         with tf.variable_scope(name) as scope:
             kernel = tf.Variable(tf.truncated_normal(shape=weights, stddev=0.1, dtype=tf.float32))
-            conv = self.conv2d(input_layer, kernel, stride)
+            conv = self.conv2d(input_layer, kernel, padding, stride)
             bias = tf.Variable(tf.constant(1., shape=[weights[-1]], dtype=tf.float32))
             preactivation = tf.nn.bias_add(conv, bias)
             conv_relu = tf.nn.relu(preactivation, name=scope.name)
@@ -109,3 +111,4 @@ class siamese:
         diff = tf.multiply(labels_f, tf.pow(tf.maximum(0.0, tf.subtract(margin_tensor, distance)), 2.))
         return tf.summary.scalar("loss", tf.reduce_mean(same) + tf.reduce_mean(diff))
         #return [tf.summary.histogram("fcw", fcw1)]
+
