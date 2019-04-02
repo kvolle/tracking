@@ -6,6 +6,7 @@ from __future__ import print_function
 import tensorflow as tf
 import numpy as np
 import random
+import glob
 image_size = 28
 
 #import helpers
@@ -30,7 +31,8 @@ def _parse_function(example_proto):
     return image_a, image_b, match
 
 # prepare data and tf.session
-data_path = ['datasets/gray.tfrecords','datasets/gray2.tfrecords']
+#data_path = ['datasets/gray.tfrecords','datasets/gray2.tfrecords']
+data_path = glob.glob('datasets/gray*.tfrecords')
 dataset = tf.data.TFRecordDataset(data_path)
 dataset = dataset.map(_parse_function)  # Parse the record into tensors.
 dataset = dataset.shuffle(buffer_size=1000)
@@ -52,14 +54,14 @@ mod = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES)
 saver = tf.train.Saver(mod, max_to_keep=15)
 tf.initialize_all_variables().run()
 
-"""if tf.train.checkpoint_exists("./model/Final"):
+if tf.train.checkpoint_exists("./model/Final"):
     print("Model exists")
     response = input("Load saved model? (Y/n)")
     if (response == 'Y') or (response == 'y'):
         saver.restore(sess, './model/Final')# Sloppy and dangerous
 else:
     print("Model not found")
-"""
+
 vars = tf.trainable_variables()
 
 train_step = tf.train.GradientDescentOptimizer(0.0001).minimize(network.loss,var_list=vars)
@@ -79,7 +81,7 @@ for step in range(N):
                         network.x2: batch_x2,
                         network.y_: batch_y})"""
     _, loss_v = sess.run([train_step, network.loss])
-    if step % 100 == 0:
+    if step % 1000 == 0:
 	#print(str(step) + ", " +str(loss_v))
         ll = sess.run(network.acc)
         writer.add_summary(ll, step)
