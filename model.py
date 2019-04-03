@@ -77,9 +77,10 @@ class siamese:
 
     def conv_layer(self, input_layer, weights, name, padding, stride=1, pooling=True):
 #        with tf.variable_scope(name) as scope:
-        kernel = tf.Variable(tf.truncated_normal(shape=weights, stddev=0.1, dtype=tf.float32))
+        kernel = tf.get_variable(name+"_kernel", shape=weights, dtype=tf.float32, initializer=tf.truncated_normal_initializer(stddev=0.1, dtype=tf.float32))
         conv = self.conv2d(input_layer, kernel, padding, stride)
-        bias = tf.Variable(tf.constant(1., shape=[weights[-1]], dtype=tf.float32))
+        init = tf.constant(1., shape=[weights[-1]], dtype=tf.float32)
+        bias = tf.get_variable(name+"_bias",  dtype=tf.float32, initializer=init)
         preactivation = tf.nn.bias_add(conv, bias)
         conv_relu = tf.nn.relu(preactivation, name=name)
         self.activation_summary(conv_relu)
