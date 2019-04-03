@@ -54,7 +54,7 @@ mod = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES)
 saver = tf.train.Saver(mod, max_to_keep=15)
 tf.initialize_all_variables().run()
 
-if tf.train.checkpoint_exists("./model/Final"):
+if tf.train.checkpoint_exists("./model/Finalt"):
     print("Model exists")
     response = input("Load saved model? (Y/n)")
     if (response == 'Y') or (response == 'y'):
@@ -71,7 +71,7 @@ writer = tf.summary.FileWriter("log/", sess.graph)
 # serialize the graph
 graph_def = tf.get_default_graph().as_graph_def()
 
-N = 500000#150000
+N = 1000#150000
 # Create a coordinator and run all QueueRunner objects
 coord = tf.train.Coordinator()
 threads = tf.train.start_queue_runners(coord=coord)
