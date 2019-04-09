@@ -37,7 +37,7 @@ dataset = tf.data.TFRecordDataset(data_path)
 dataset = dataset.map(_parse_function)  # Parse the record into tensors.
 dataset = dataset.shuffle(buffer_size=1000)
 dataset = dataset.repeat()  # Repeat the input indefinitely.
-dataset = dataset.batch(32)
+dataset = dataset.batch(64)
 iterator = dataset.make_initializable_iterator()
 [x1, x2, y] = iterator.get_next()
 
@@ -71,7 +71,7 @@ writer = tf.summary.FileWriter("log/", sess.graph)
 # serialize the graph
 graph_def = tf.get_default_graph().as_graph_def()
 
-N = 500000#150000
+N = 2000000#150000
 # Create a coordinator and run all QueueRunner objects
 coord = tf.train.Coordinator()
 threads = tf.train.start_queue_runners(coord=coord)
@@ -81,7 +81,7 @@ for step in range(N):
                         network.x2: batch_x2,
                         network.y_: batch_y})"""
     _, loss_v = sess.run([train_step, network.loss])
-    if step % 500 == 0:
+    if step % 1000 == 0:
 	#print(str(step) + ", " +str(loss_v))
         ll = sess.run(network.acc)
         writer.add_summary(ll, step)
