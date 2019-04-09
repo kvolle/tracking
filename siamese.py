@@ -25,14 +25,14 @@ def _parse_function(example_proto):
     match = tf.cast(features['match'], tf.int32)
 
     # Reshape image data into the original shape
-    image_a = tf.reshape(image_a, [image_size, image_size, 1])
-    image_b = tf.reshape(image_b, [image_size, image_size, 1])
+    image_a = tf.reshape(image_a, [image_size, image_size, 3])
+    image_b = tf.reshape(image_b, [image_size, image_size, 3])
 
     return image_a, image_b, match
 
 # prepare data and tf.session
 #data_path = ['datasets/gray.tfrecords','datasets/gray2.tfrecords']
-data_path = glob.glob('datasets/gray*.tfrecords')
+data_path = glob.glob('datasets/color*.tfrecords')
 dataset = tf.data.TFRecordDataset(data_path)
 dataset = dataset.map(_parse_function)  # Parse the record into tensors.
 dataset = dataset.shuffle(buffer_size=1000)
