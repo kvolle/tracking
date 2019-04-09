@@ -30,7 +30,7 @@ class siamese:
         l6_filters = 128
         input_layer_local = input_layer
         with tf.variable_scope("conv1"):
-            self.out_1 = self.conv_layer(input_layer_local, [7,7,1, l1_filters],'layer1', padding='VALID', stride = 1)
+            self.out_1 = self.conv_layer(input_layer_local, [7,7,3, l1_filters],'layer1', padding='VALID', stride = 1)
         with tf.variable_scope("conv2"):
             self.out_2 = self.conv_layer(self.out_1, [5, 5, l1_filters, l2_filters],'layer2', padding='VALID', stride = 1, pooling=False)
         with tf.variable_scope("conv3"):
