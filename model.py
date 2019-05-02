@@ -22,12 +22,14 @@ class siamese:
 
     def network(self, input_layer, sizes):
         #i = 0
-        l1_filters = 16
-        l2_filters = 32#64
-        l3_filters = 32
-        l4_filters = 32
-        l5_filters = 64
-        l6_filters = 128
+        l1_filters = 64
+        l2_filters = 128#64
+        l3_filters = 128
+        l4_filters = 256
+        l5_filters = 512
+        l6_filters = 1024
+        l7_filters = 1024
+        l8_filters = 128
         input_layer_local = input_layer
         with tf.variable_scope("conv1"):
             self.out_1 = self.conv_layer(input_layer_local, [7,7,3, l1_filters],'layer1', padding='VALID', stride = 1)
@@ -36,12 +38,16 @@ class siamese:
         with tf.variable_scope("conv3"):
             self.out_3 = self.conv_layer(self.out_2, [5, 5, l2_filters, l3_filters], 'layer3', padding='SAME', stride = 1, pooling=False)
         with tf.variable_scope("conv4"):
-            self.out_4 = self.conv_layer(self.out_3, [3, 3, l3_filters, l4_filters], 'layer4', padding='VALID',stride = 1, pooling=False)
+            self.out_4 = self.conv_layer(self.out_3, [4, 4, l3_filters, l4_filters], 'layer4', padding='VALID',stride = 1, pooling=False)
         with tf.variable_scope("conv5"):
-            self.out_5 = self.conv_layer(self.out_4, [3, 3, l4_filters, l5_filters], 'layer5', padding='VALID',stride = 1, pooling=False)
-        with tf.variable_scope("conv6"):
-            self.out_6 = self.conv_layer(self.out_5, [3, 3, l5_filters, l6_filters], 'layer6', padding='VALID',stride = 1, pooling=False)
-        self.final_out = tf.reshape(self.out_6, [-1, l6_filters])
+            self.out_5 = self.conv_layer(self.out_4, [4, 4, l4_filters, l5_filters], 'layer5', padding='VALID',stride = 1, pooling=False)
+        with tf.variable_scope("fc6"):
+            self.out_6 = self.conv_layer(self.out_5, [1, 1, l5_filters, l6_filters], 'layer6', padding='VALID',stride = 1, pooling=False)
+        with tf.variable_scope("fc7"):
+            self.out_7 = self.conv_layer(self.out_6, [1, 1, l6_filters, l7_filters], 'layer6', padding='VALID',stride = 1, pooling=False)
+        with tf.variable_scope("fc8"):
+            self.out_8 = self.conv_layer(self.out_7, [1, 1, l7_filters, l8_filters], 'layer6', padding='VALID',stride = 1, pooling=False)
+        self.final_out = tf.reshape(self.out_8, [-1, l8_filters])
         return self.final_out
     """
         for x in sizes:
